@@ -46,3 +46,56 @@ angular.module('starter.controllers', [])
 
 .controller('PlaylistCtrl', function($scope, $stateParams) {
 })
+
+.controller('MapCtrl', function($scope, $ionicLoading){
+
+  function init(){
+    console.log('yo yo honey singh');
+
+    nokia.Settings.set("app_id", "TlbaFAtlFjyoXQccrn5i");
+    nokia.Settings.set("app_code", "Z0WHPsdC2wae8exM5rT_ig");
+
+    // Get the DOM node to which we will append the map
+    var mapContainer = document.getElementById("mapContainer");
+    // Create a map inside the map container DOM node
+    var map = new nokia.maps.map.Display(mapContainer, {
+      // initial center and zoom level of the map
+      components:[new nokia.maps.map.component.Behavior()],
+      center: [52.51, 13.4],
+      zoomLevel: 5
+    });
+
+    $scope.map = map;
+  }
+  init();
+
+
+  $scope.locateMe = function(){
+    console.log('Locating now ... ');
+
+    if(!$scope.map) {
+      return;
+    }
+
+    $scope.loading = $ionicLoading.show({
+      content: 'Getting current location...',
+      showBackdrop: false
+    });
+
+    navigator.geolocation.getCurrentPosition(function(pos) {
+      // $scope.map.setCenter(new google.maps.LatLng(pos.coords.latitude, pos.coords.longitude));
+      $ionicLoading.hide();
+      console.log(pos.coords.latitude + ' , ' +pos.coords.longitude);
+
+      accuracyCircle = new nokia.maps.map.Circle(pos.coords, pos.coords.accuracy);
+      $scope.map.objects.addAll([accuracyCircle]);
+
+      $scope.map.zoomTo(accuracyCircle.getBoundingBox(), false, "default");
+      $scope.map.setZoomLevel(17);
+
+    }, function(error) {
+      alert('Unable to get location: ' + error.message);
+    });
+  }
+
+})
