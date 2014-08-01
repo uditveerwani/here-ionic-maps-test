@@ -70,6 +70,16 @@ angular.module('starter.controllers', [])
   init();
 
 
+  $scope.toggleLanguage = function(){
+    if($scope.currentLanguage == 'en'){
+      $scope.currentLanguage = '中文';
+      nokia.Settings.set("defaultLanguage", "zh-CN");
+    }else{
+      $scope.currentLanguage = 'en';
+      nokia.Settings.set("defaultLanguage", "en-US");
+    }
+  }
+
   $scope.locateMe = function(){
     console.log('Locating now ... ');
 
@@ -87,15 +97,31 @@ angular.module('starter.controllers', [])
       $ionicLoading.hide();
       console.log(pos.coords.latitude + ' , ' +pos.coords.longitude);
 
-      accuracyCircle = new nokia.maps.map.Circle(pos.coords, pos.coords.accuracy);
-      $scope.map.objects.addAll([accuracyCircle]);
+      $scope.marker = new nokia.maps.map.StandardMarker(pos.coords);
 
-      $scope.map.zoomTo(accuracyCircle.getBoundingBox(), false, "default");
-      $scope.map.setZoomLevel(17);
+      $scope.map.objects.add($scope.marker);
+
+      $scope.map.zoomTo($scope.marker.getBoundingBox(), false, "default");
 
     }, function(error) {
       alert('Unable to get location: ' + error.message);
     });
+
+    var options = { timeout: 30000 };
+
+    watchID = navigator.geolocation.watchPosition(
+      function(pos){
+        if($scope.marker){
+          console.log('updating ...');
+          alert('Location Changing ... ');
+          
+          $scope.marker.set("coordinate", pos.coords);
+          $scope.map.update(-1, true);
+        }
+      },
+      function(error){
+        alert('Unable to get location: ' + error.message);
+      }, options);
   }
 
 })
