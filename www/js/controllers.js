@@ -113,8 +113,7 @@ angular.module('starter.controllers', [])
       function(pos){
         if($scope.marker){
           console.log('updating ...');
-          alert('Location Changing ... ');
-          
+
           $scope.marker.set("coordinate", pos.coords);
           $scope.map.update(-1, true);
         }
