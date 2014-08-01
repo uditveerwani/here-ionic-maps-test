@@ -60,6 +60,7 @@ angular.module('starter.controllers', [])
     // Create a map inside the map container DOM node
     var map = new nokia.maps.map.Display(mapContainer, {
       // initial center and zoom level of the map
+      components:[new nokia.maps.map.component.Behavior()],
       center: [52.51, 13.4],
       zoomLevel: 5
     });
